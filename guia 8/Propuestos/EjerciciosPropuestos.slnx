@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ClienteCatalogoMVC/ClienteCatalogoMVC.csproj" />
+  <Project Path="ServicioCatalogoAPI/ServicioCatalogoAPI.csproj" />
+</Solution>

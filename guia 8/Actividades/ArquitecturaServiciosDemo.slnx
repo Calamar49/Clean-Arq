@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ClienteProductosMVC/ClienteProductosMVC.csproj" />
+  <Project Path="ServicioProductosAPI/ServicioProductosAPI.csproj" />
+</Solution>

@@ -1,0 +1,28 @@
+@model ClienteCatalogoMVC.Models.ProductoViewModel
+
+@{
+    ViewData["Title"] = "Eliminar Producto";
+}
+
+<h2>Eliminar Producto</h2>
+
+<div class="alert alert-warning">
+    ¿Está seguro de que desea eliminar este producto?
+</div>
+
+<ul class="list-group mb-3">
+    <li class="list-group-item"><strong>Código:</strong> @Model.Codigo</li>
+    <li class="list-group-item"><strong>Nombre:</strong> @Model.Nombre</li>
+    <li class="list-group-item"><strong>Descripción:</strong> @Model.Descripcion</li>
+    <li class="list-group-item"><strong>Categoría:</strong> @Model.Categoria</li>
+    <li class="list-group-item"><strong>Precio:</strong> @Model.Precio.ToString("N2")</li>
+    <li class="list-group-item"><strong>Stock:</strong> @Model.Stock</li>
+    <li class="list-group-item"><strong>Fecha de registro:</strong> @Model.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</li>
+    <li class="list-group-item"><strong>Activo:</strong> @(Model.Activo ? "Sí" : "No")</li>
+</ul>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

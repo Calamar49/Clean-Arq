@@ -1,0 +1,25 @@
+@model ClienteProductosMVC.Models.ProductoViewModel
+
+@{
+    ViewData["Title"] = "Eliminar Producto";
+}
+
+<h2>Eliminar Producto</h2>
+
+<div class="alert alert-warning">
+    ¿Está seguro de que desea eliminar este producto?
+</div>
+
+<ul class="list-group mb-3">
+    <li class="list-group-item"><strong>Id:</strong> @Model.Id</li>
+    <li class="list-group-item"><strong>Nombre:</strong> @Model.Nombre</li>
+    <li class="list-group-item"><strong>Categoría:</strong> @Model.Categoria</li>
+    <li class="list-group-item"><strong>Precio:</strong> @Model.Precio</li>
+    <li class="list-group-item"><strong>Stock:</strong> @Model.Stock</li>
+</ul>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
