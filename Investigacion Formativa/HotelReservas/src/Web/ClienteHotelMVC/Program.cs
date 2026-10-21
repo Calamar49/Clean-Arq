@@ -26,7 +26,14 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// Al publicar en la red del aula se sirve solo por HTTP: el certificado de
+// desarrollo no es de confianza en otras máquinas, y redirigir a HTTPS les
+// mostraría una advertencia de seguridad en lugar de la aplicación.
+if (!builder.Configuration.GetValue<bool>("SoloHttp"))
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
