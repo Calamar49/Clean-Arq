@@ -1,0 +1,38 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/BuildingBlocks/">
+    <Project Path="src/BuildingBlocks/Hotel.Contracts/Hotel.Contracts.csproj" />
+    <Project Path="src/BuildingBlocks/Hotel.Messaging/Hotel.Messaging.csproj" />
+  </Folder>
+  <Folder Name="/src/Habitaciones/">
+    <Project Path="src/Habitaciones/Habitaciones.Api/Habitaciones.Api.csproj" />
+    <Project Path="src/Habitaciones/Habitaciones.Application/Habitaciones.Application.csproj" />
+    <Project Path="src/Habitaciones/Habitaciones.Domain/Habitaciones.Domain.csproj" />
+    <Project Path="src/Habitaciones/Habitaciones.Infrastructure/Habitaciones.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Notificaciones/">
+    <Project Path="src/Notificaciones/Notificaciones.Api/Notificaciones.Api.csproj" />
+    <Project Path="src/Notificaciones/Notificaciones.Application/Notificaciones.Application.csproj" />
+    <Project Path="src/Notificaciones/Notificaciones.Domain/Notificaciones.Domain.csproj" />
+    <Project Path="src/Notificaciones/Notificaciones.Infrastructure/Notificaciones.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Pagos/">
+    <Project Path="src/Pagos/Pagos.Api/Pagos.Api.csproj" />
+    <Project Path="src/Pagos/Pagos.Application/Pagos.Application.csproj" />
+    <Project Path="src/Pagos/Pagos.Domain/Pagos.Domain.csproj" />
+    <Project Path="src/Pagos/Pagos.Infrastructure/Pagos.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Reservas/">
+    <Project Path="src/Reservas/Reservas.Api/Reservas.Api.csproj" />
+    <Project Path="src/Reservas/Reservas.Application/Reservas.Application.csproj" />
+    <Project Path="src/Reservas/Reservas.Domain/Reservas.Domain.csproj" />
+    <Project Path="src/Reservas/Reservas.Infrastructure/Reservas.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Web/">
+    <Project Path="src/Web/ClienteHotelMVC/ClienteHotelMVC.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Hotel.IntegrationTests/Hotel.IntegrationTests.csproj" />
+    <Project Path="tests/Hotel.UnitTests/Hotel.UnitTests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,47 @@
+﻿@{
+    var accion = (ViewContext.RouteData.Values["action"] ?? "").ToString();
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] · Hotel Alborada</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="encabezado">
+        <div class="encabezado-interior">
+            <a class="marca" asp-controller="Reservas" asp-action="Index">
+                <span class="marca-nombre">Hotel Alborada</span>
+                <span class="marca-sufijo">Cusco</span>
+            </a>
+            <nav class="navegacion">
+                <a asp-controller="Reservas" asp-action="Index"
+                   class="@(accion == "Index" || accion == "Reservar" ? "activo" : "")">Buscar habitación</a>
+                <a asp-controller="Reservas" asp-action="Mias"
+                   class="@(accion == "Mias" ? "activo" : "")">Mis reservas</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="contenido">
+        @if (TempData["Error"] is string error)
+        {
+            <div class="aviso aviso-error">@error</div>
+        }
+        @if (TempData["Mensaje"] is string mensaje)
+        {
+            <div class="aviso aviso-exito">@mensaje</div>
+        }
+
+        @RenderBody()
+    </main>
+
+    <footer class="pie">
+        Hotel Alborada · Sistema de reservas · Arquitectura Orientada a Servicios
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

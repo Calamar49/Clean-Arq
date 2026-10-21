@@ -1,0 +1,78 @@
+@model CrearReservaVM
+@{
+    ViewData["Title"] = "Datos del huésped";
+}
+
+<div class="progreso">
+    <span class="progreso-paso completado">Habitación</span>
+    <span class="progreso-paso activo">Datos</span>
+    <span class="progreso-paso">Pago</span>
+</div>
+
+<h1 class="titulo-pagina">Datos del huésped</h1>
+<p class="subtitulo-pagina">Revise los datos de su estadía e indique a nombre de quién va la reserva.</p>
+
+<div class="tarjeta">
+    <h2 class="seccion">Detalle de la estadía</h2>
+
+    <div class="resumen">
+        <div class="resumen-fila">
+            <span class="resumen-etiqueta">Habitación</span>
+            <span class="resumen-valor">@Model.HabitacionNumero · @Model.Tipo</span>
+        </div>
+        <div class="resumen-fila">
+            <span class="resumen-etiqueta">Llegada</span>
+            <span class="resumen-valor">@Model.FechaEntrada.ToString("dd/MM/yyyy")</span>
+        </div>
+        <div class="resumen-fila">
+            <span class="resumen-etiqueta">Salida</span>
+            <span class="resumen-valor">@Model.FechaSalida.ToString("dd/MM/yyyy")</span>
+        </div>
+        <div class="resumen-fila">
+            <span class="resumen-etiqueta">
+                @Model.Noches @(Model.Noches == 1 ? "noche" : "noches") × @Model.PrecioPorNoche.ToString("N2")
+            </span>
+            <span class="resumen-valor">@((Model.PrecioPorNoche * Model.Noches).ToString("N2"))</span>
+        </div>
+        <div class="resumen-fila total">
+            <span class="resumen-etiqueta">Total estimado</span>
+            <span class="resumen-valor">@Model.Total.ToString("N2")</span>
+        </div>
+    </div>
+</div>
+
+<form method="post" class="tarjeta">
+    <h2 class="seccion">Datos del huésped</h2>
+
+    <div asp-validation-summary="ModelOnly" class="aviso aviso-error"
+         style="@(ViewData.ModelState.ErrorCount > 0 ? "" : "display:none")"></div>
+
+    <input type="hidden" asp-for="HabitacionId" />
+    <input type="hidden" asp-for="HabitacionNumero" />
+    <input type="hidden" asp-for="Tipo" />
+    <input type="hidden" asp-for="PrecioPorNoche" />
+    <input type="hidden" asp-for="FechaEntrada" />
+    <input type="hidden" asp-for="FechaSalida" />
+
+    <div class="campo">
+        <label asp-for="HuespedNombre"></label>
+        <input asp-for="HuespedNombre" placeholder="Nombre y apellidos" autocomplete="name" />
+        <span asp-validation-for="HuespedNombre" class="texto-error"></span>
+    </div>
+
+    <div class="campo">
+        <label asp-for="HuespedEmail"></label>
+        <input asp-for="HuespedEmail" type="email" placeholder="correo@@ejemplo.com" autocomplete="email" />
+        <span asp-validation-for="HuespedEmail" class="texto-error"></span>
+        <span class="texto-ayuda">Le enviaremos la confirmación a esta dirección.</span>
+    </div>
+
+    <div class="acciones">
+        <button type="submit" class="boton boton-principal">Continuar al pago</button>
+        <a class="boton boton-secundario" asp-action="Index">Volver a la búsqueda</a>
+    </div>
+
+    <p class="texto-ayuda" style="margin-top:14px">
+        Todavía no se realizará ningún cobro. En el siguiente paso elegirá el medio de pago.
+    </p>
+</form>

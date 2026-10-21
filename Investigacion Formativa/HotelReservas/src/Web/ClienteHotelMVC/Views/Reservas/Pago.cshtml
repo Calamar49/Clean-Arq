@@ -1,0 +1,99 @@
+@using Hotel.Contracts
+@model PagoVM
+@{
+    ViewData["Title"] = "Pago";
+}
+
+<div class="progreso">
+    <span class="progreso-paso completado">Habitación</span>
+    <span class="progreso-paso completado">Datos</span>
+    <span class="progreso-paso activo">Pago</span>
+</div>
+
+<h1 class="titulo-pagina">Confirme el pago</h1>
+<p class="subtitulo-pagina">Revise el importe y elija con qué tarjeta desea abonar su estadía.</p>
+
+<div class="tarjeta">
+    <h2 class="seccion">Resumen de la compra</h2>
+
+    <div class="resumen">
+        <div class="resumen-fila">
+            <span class="resumen-etiqueta">Habitación</span>
+            <span class="resumen-valor">@Model.HabitacionNumero · @Model.Tipo</span>
+        </div>
+        <div class="resumen-fila">
+            <span class="resumen-etiqueta">Huésped</span>
+            <span class="resumen-valor">@Model.HuespedNombre</span>
+        </div>
+        <div class="resumen-fila">
+            <span class="resumen-etiqueta">Estadía</span>
+            <span class="resumen-valor">
+                @Model.FechaEntrada.ToString("dd/MM/yyyy") – @Model.FechaSalida.ToString("dd/MM/yyyy")
+            </span>
+        </div>
+        <div class="resumen-fila">
+            <span class="resumen-etiqueta">
+                @Model.Noches @(Model.Noches == 1 ? "noche" : "noches") × @Model.PrecioPorNoche.ToString("N2")
+            </span>
+            <span class="resumen-valor">@((Model.PrecioPorNoche * Model.Noches).ToString("N2"))</span>
+        </div>
+        <div class="resumen-fila total">
+            <span class="resumen-etiqueta">Importe a cobrar</span>
+            <span class="resumen-valor">@Model.Total.ToString("N2")</span>
+        </div>
+    </div>
+</div>
+
+<form method="post" asp-action="Pagar" class="tarjeta">
+    <h2 class="seccion">Medio de pago</h2>
+
+    <div asp-validation-summary="ModelOnly" class="aviso aviso-error"
+         style="@(ViewData.ModelState.ErrorCount > 0 ? "" : "display:none")"></div>
+
+    <div class="aviso aviso-informativo">
+        <b>Entorno de prueba.</b> No se solicitan datos reales de tarjeta ni se realiza
+        ningún cobro verdadero. Elija una de las tarjetas de prueba para continuar.
+    </div>
+
+    <input type="hidden" asp-for="HabitacionId" />
+    <input type="hidden" asp-for="HabitacionNumero" />
+    <input type="hidden" asp-for="Tipo" />
+    <input type="hidden" asp-for="PrecioPorNoche" />
+    <input type="hidden" asp-for="FechaEntrada" />
+    <input type="hidden" asp-for="FechaSalida" />
+    <input type="hidden" asp-for="HuespedNombre" />
+    <input type="hidden" asp-for="HuespedEmail" />
+
+    <div class="metodos">
+        <label class="metodo">
+            <input type="radio" asp-for="MetodoPago" value="@MetodosPago.TarjetaAprobada" checked />
+            <span class="metodo-cuerpo">
+                <span class="metodo-titulo">Visa de prueba · **** 4242</span>
+                <span class="metodo-texto">El cobro se aprueba y la reserva queda confirmada.</span>
+            </span>
+        </label>
+
+        <label class="metodo">
+            <input type="radio" asp-for="MetodoPago" value="@MetodosPago.TarjetaRechazada" />
+            <span class="metodo-cuerpo">
+                <span class="metodo-titulo">Visa de prueba · **** 0002</span>
+                <span class="metodo-texto">
+                    La entidad rechaza el cobro. La habitación se libera automáticamente.
+                </span>
+            </span>
+        </label>
+    </div>
+
+    <span asp-validation-for="MetodoPago" class="texto-error"></span>
+
+    <div class="acciones">
+        <button type="submit" class="boton boton-principal">
+            Pagar @Model.Total.ToString("N2") y confirmar
+        </button>
+        <a class="boton boton-secundario" asp-action="Index">Cancelar</a>
+    </div>
+
+    <p class="texto-ayuda" style="margin-top:14px">
+        El importe se cobrará únicamente después de asegurar la habitación para sus fechas.
+    </p>
+</form>

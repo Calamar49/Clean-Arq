@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>f6ca43ef-0b39-4305-9a5e-bb8bd0b4edaa</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pagos.Application\Pagos.Application.csproj" />
+    <ProjectReference Include="..\Pagos.Infrastructure\Pagos.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Hotel.Messaging\Hotel.Messaging.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.3.1" />
+  </ItemGroup>
+
+</Project>

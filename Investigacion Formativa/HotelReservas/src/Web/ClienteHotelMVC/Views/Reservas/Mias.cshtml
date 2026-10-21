@@ -1,0 +1,91 @@
+@model MisReservasVM
+@{
+    ViewData["Title"] = "Mis reservas";
+}
+
+<h1 class="titulo-pagina">Mis reservas</h1>
+<p class="subtitulo-pagina">Consulte el estado de sus reservas con el correo que utilizó al reservar.</p>
+
+<form method="post" class="tarjeta">
+    <div asp-validation-summary="ModelOnly" class="aviso aviso-error"
+         style="@(ViewData.ModelState.ErrorCount > 0 ? "" : "display:none")"></div>
+
+    <div class="fila-campos">
+        <div class="campo" style="flex:2">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" type="email" placeholder="correo@@ejemplo.com" autocomplete="email" />
+            <span asp-validation-for="Email" class="texto-error"></span>
+        </div>
+
+        <div class="campo">
+            <button type="submit" class="boton boton-principal">Consultar</button>
+        </div>
+    </div>
+</form>
+
+@if (Model.Buscado)
+{
+    @if (Model.Reservas.Any())
+    {
+        <div class="tarjeta">
+            <h2 class="seccion">
+                @Model.Reservas.Count @(Model.Reservas.Count == 1 ? "reserva encontrada" : "reservas encontradas")
+            </h2>
+
+            <div class="tabla-contenedor">
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Habitación</th>
+                            <th>Estadía</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th class="columna-derecha">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var reserva in Model.Reservas)
+                        {
+                            <tr>
+                                <td><strong>@reserva.Id.ToString()[..8].ToUpperInvariant()</strong></td>
+                                <td>@reserva.HabitacionNumero</td>
+                                <td class="columna-fechas">
+                                    @reserva.FechaEntrada.ToString("dd/MM/yyyy") – @reserva.FechaSalida.ToString("dd/MM/yyyy")
+                                    <br />
+                                    <span class="texto-ayuda">
+                                        @reserva.Noches @(reserva.Noches == 1 ? "noche" : "noches")
+                                    </span>
+                                </td>
+                                <td>@reserva.MontoTotal.ToString("N2")</td>
+                                <td><span class="etiqueta-estado @reserva.ClaseEstado">@reserva.Estado</span></td>
+                                <td class="columna-derecha columna-acciones">
+                                    <a class="boton boton-discreto boton-pequeno"
+                                       asp-action="Seguimiento" asp-route-id="@reserva.Id">Ver</a>
+
+                                    @if (reserva.SePuedeCancelar)
+                                    {
+                                        <form method="post" asp-action="Cancelar" asp-route-id="@reserva.Id"
+                                              onsubmit="return confirm('¿Desea cancelar esta reserva?');"
+                                              style="display:inline">
+                                            <input type="hidden" name="email" value="@Model.Email" />
+                                            <input type="hidden" name="motivo" value="Cancelada por el huésped." />
+                                            <button type="submit" class="boton boton-peligro boton-pequeno">Cancelar</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="tarjeta vacio">
+            <p class="vacio-titulo">No encontramos reservas</p>
+            <p>No hay reservas asociadas a ese correo electrónico.</p>
+        </div>
+    }
+}

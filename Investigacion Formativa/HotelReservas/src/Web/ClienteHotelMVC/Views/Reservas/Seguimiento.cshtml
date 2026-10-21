@@ -1,0 +1,144 @@
+@model ReservaVM
+@{
+    ViewData["Title"] = "Estado de la reserva";
+
+    // Posición dentro de la Saga, para resaltar el paso correspondiente.
+    var fallida = Model.Estado is "Rechazada" or "Cancelada";
+    var avance = Model.Estado switch
+    {
+        "Pendiente" => 0,
+        "Bloqueada" => 1,
+        "Confirmada" => 2,
+        _ => 1
+    };
+
+    string ClasePaso(int indice)
+    {
+        if (fallida && indice == avance) return "paso fallido";
+        if (indice < avance) return "paso completado";
+        if (indice == avance) return Model.Estado == "Confirmada" ? "paso completado" : "paso activo";
+        return "paso";
+    }
+}
+
+<div class="tarjeta tarjeta-destacada panel-seguimiento">
+    <span class="etiqueta-estado @Model.ClaseEstado" id="etiquetaEstado">@Model.Estado</span>
+
+    <p class="seguimiento-descripcion" id="descripcionEstado">@Model.DescripcionEstado</p>
+
+    <p class="seguimiento-nota" id="notaEstado">
+        @if (Model.EnProceso)
+        {
+            <text>Estamos procesando su solicitud. Esta página se actualizará automáticamente.</text>
+        }
+        else if (Model.Estado == "Confirmada")
+        {
+            <text>Le enviamos la confirmación a @Model.HuespedEmail.</text>
+        }
+        else if (!string.IsNullOrWhiteSpace(Model.Motivo))
+        {
+            @Model.Motivo
+        }
+    </p>
+
+    <div class="pasos">
+        <div class="@ClasePaso(0)">
+            <div class="paso-marca">1</div>
+            <div class="paso-texto">Solicitud recibida</div>
+        </div>
+        <div class="@ClasePaso(1)">
+            <div class="paso-marca">2</div>
+            <div class="paso-texto">Habitación reservada</div>
+        </div>
+        <div class="@ClasePaso(2)">
+            <div class="paso-marca">3</div>
+            <div class="paso-texto">Pago confirmado</div>
+        </div>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Model.HabitacionNumero))
+{
+    <div class="tarjeta">
+        <h2 class="seccion">Detalle de la reserva</h2>
+
+        <div class="resumen">
+            <div class="resumen-fila">
+                <span class="resumen-etiqueta">Código</span>
+                <span class="resumen-valor">@Model.Id.ToString()[..8].ToUpperInvariant()</span>
+            </div>
+            <div class="resumen-fila">
+                <span class="resumen-etiqueta">Habitación</span>
+                <span class="resumen-valor">@Model.HabitacionNumero</span>
+            </div>
+            <div class="resumen-fila">
+                <span class="resumen-etiqueta">Huésped</span>
+                <span class="resumen-valor">@Model.HuespedNombre</span>
+            </div>
+            <div class="resumen-fila">
+                <span class="resumen-etiqueta">Estadía</span>
+                <span class="resumen-valor">
+                    @Model.FechaEntrada.ToString("dd/MM/yyyy") – @Model.FechaSalida.ToString("dd/MM/yyyy")
+                    (@Model.Noches @(Model.Noches == 1 ? "noche" : "noches"))
+                </span>
+            </div>
+            <div class="resumen-fila total">
+                <span class="resumen-etiqueta">Total</span>
+                <span class="resumen-valor">@Model.MontoTotal.ToString("N2")</span>
+            </div>
+        </div>
+
+        <div class="acciones">
+            <a class="boton boton-secundario" asp-action="Index">Nueva búsqueda</a>
+
+            @if (Model.SePuedeCancelar)
+            {
+                <form method="post" asp-action="Cancelar" asp-route-id="@Model.Id"
+                      onsubmit="return confirm('¿Desea cancelar esta reserva?');" style="display:inline">
+                    <input type="hidden" name="motivo" value="Cancelada por el huésped." />
+                    <button type="submit" class="boton boton-peligro">Cancelar reserva</button>
+                </form>
+            }
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @if (Model.EnProceso)
+    {
+        <script>
+            // Mientras la Saga avanza, se consulta el estado cada segundo.
+            // Ante cualquier cambio se recarga la página: así la etiqueta, la
+            // barra de pasos y el detalle quedan siempre coherentes entre sí.
+            (function () {
+                const url = '@Url.Action("Estado", new { id = Model.Id })';
+                const estadoInicial = document.getElementById('etiquetaEstado').textContent.trim();
+                const nota = document.getElementById('notaEstado');
+                let intentos = 0;
+
+                const temporizador = setInterval(async function () {
+                    intentos++;
+
+                    try {
+                        const respuesta = await fetch(url);
+                        const datos = await respuesta.json();
+
+                        if (datos.estado !== estadoInicial || !datos.enProceso) {
+                            clearInterval(temporizador);
+                            location.reload();
+                            return;
+                        }
+                    } catch {
+                        // Si falla una consulta puntual, se intenta de nuevo.
+                    }
+
+                    // Tras 60 intentos se deja de consultar para no insistir indefinidamente.
+                    if (intentos > 60) {
+                        clearInterval(temporizador);
+                        nota.textContent = 'La reserva sigue en proceso. Actualice la página para ver el estado.';
+                    }
+                }, 1000);
+            })();
+        </script>
+    }
+}

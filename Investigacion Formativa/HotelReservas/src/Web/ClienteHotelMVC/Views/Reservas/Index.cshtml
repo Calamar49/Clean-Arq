@@ -1,0 +1,172 @@
+@model BuscarDisponibilidadVM
+@{
+    ViewData["Title"] = "Buscar habitación";
+}
+
+<section class="portada">
+    <p class="portada-sello">Cusco &middot; Centro histórico</p>
+    <h1 class="portada-titulo">Descanse en el corazón de la ciudad imperial</h1>
+    <p class="portada-texto">
+        A pocos pasos de la Plaza de Armas. Habitaciones cuidadas, atención cercana
+        y la tranquilidad de una reserva confirmada al instante.
+    </p>
+</section>
+
+<form method="post" class="tarjeta tarjeta-destacada tarjeta-buscador">
+    <div asp-validation-summary="ModelOnly" class="aviso aviso-error"
+         style="@(ViewData.ModelState.ErrorCount > 0 ? "" : "display:none")"></div>
+
+    <div class="fila-campos">
+        <div class="campo">
+            <label asp-for="FechaEntrada"></label>
+            <input asp-for="FechaEntrada" type="date" />
+            <span asp-validation-for="FechaEntrada" class="texto-error"></span>
+        </div>
+
+        <div class="campo">
+            <label asp-for="FechaSalida"></label>
+            <input asp-for="FechaSalida" type="date" />
+            <span asp-validation-for="FechaSalida" class="texto-error"></span>
+        </div>
+
+        <div class="campo">
+            <label asp-for="Huespedes"></label>
+            <select asp-for="Huespedes">
+                @for (var i = 1; i <= 6; i++)
+                {
+                    <option value="@i">@i @(i == 1 ? "huésped" : "huéspedes")</option>
+                }
+            </select>
+            <span asp-validation-for="Huespedes" class="texto-error"></span>
+        </div>
+
+        <div class="campo">
+            <button type="submit" class="boton boton-principal">Buscar disponibilidad</button>
+        </div>
+    </div>
+</form>
+
+@if (Model.Buscado)
+{
+    @if (Model.Resultados.Any())
+    {
+        <h2 class="seccion">
+            @Model.Resultados.Count @(Model.Resultados.Count == 1 ? "habitación disponible" : "habitaciones disponibles")
+            · @Model.Noches @(Model.Noches == 1 ? "noche" : "noches")
+        </h2>
+
+        <div class="lista-habitaciones">
+            @foreach (var habitacion in Model.Resultados)
+            {
+                <div class="habitacion">
+                    <div class="habitacion-datos">
+                        <div class="habitacion-numero">@habitacion.Numero</div>
+                        <div>
+                            <p class="habitacion-titulo">Habitación @habitacion.Tipo</p>
+                            <p class="habitacion-detalle">
+                                Hasta @habitacion.Capacidad @(habitacion.Capacidad == 1 ? "persona" : "personas")
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="habitacion-precio">
+                        <div class="precio-monto">@habitacion.PrecioPorNoche.ToString("N2")</div>
+                        <div class="precio-nota">
+                            por noche · @((habitacion.PrecioPorNoche * Model.Noches).ToString("N2")) en total
+                        </div>
+                    </div>
+
+                    <a class="boton boton-principal boton-pequeno"
+                       asp-action="Reservar"
+                       asp-route-habitacionId="@habitacion.Id"
+                       asp-route-entrada="@Model.FechaEntrada!.Value.ToString("yyyy-MM-dd")"
+                       asp-route-salida="@Model.FechaSalida!.Value.ToString("yyyy-MM-dd")">Reservar</a>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="tarjeta vacio">
+            <p class="vacio-titulo">No hay habitaciones disponibles</p>
+            <p>No encontramos habitaciones libres para esas fechas. Pruebe con otro rango o con menos huéspedes.</p>
+        </div>
+    }
+}
+else
+{
+    @* Contenido informativo mientras el visitante no ha buscado todavía. *@
+
+    @if (Model.Tipos.Any())
+    {
+        <h2 class="seccion seccion-centrada">Nuestras habitaciones</h2>
+
+        <div class="tipos">
+            @foreach (var tipo in Model.Tipos)
+            {
+                <div class="tipo">
+                    <div class="tipo-cabecera">
+                        <span class="tipo-nombre">@tipo.Tipo</span>
+                        <span class="tipo-capacidad">
+                            hasta @tipo.CapacidadMaxima @(tipo.CapacidadMaxima == 1 ? "persona" : "personas")
+                        </span>
+                    </div>
+
+                    <p class="tipo-descripcion">@tipo.Descripcion</p>
+
+                    <div class="tipo-pie">
+                        <div>
+                            <span class="tipo-desde">desde</span>
+                            <span class="tipo-precio">@tipo.PrecioDesde.ToString("N2")</span>
+                            <span class="tipo-desde">por noche</span>
+                        </div>
+                        <span class="tipo-cantidad">
+                            @tipo.Cantidad @(tipo.Cantidad == 1 ? "habitación" : "habitaciones")
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <h2 class="seccion seccion-centrada">Incluido en su estadía</h2>
+
+    <div class="servicios">
+        <div class="servicio">
+            <p class="servicio-titulo">Desayuno andino</p>
+            <p class="servicio-texto">Servido cada mañana de 6:30 a 10:00.</p>
+        </div>
+        <div class="servicio">
+            <p class="servicio-titulo">Conexión a internet</p>
+            <p class="servicio-texto">Wi-Fi de fibra en todas las habitaciones.</p>
+        </div>
+        <div class="servicio">
+            <p class="servicio-titulo">Recepción permanente</p>
+            <p class="servicio-texto">Atención las 24 horas, todos los días.</p>
+        </div>
+        <div class="servicio">
+            <p class="servicio-titulo">Guardaequipaje</p>
+            <p class="servicio-texto">Antes del ingreso y después de la salida.</p>
+        </div>
+    </div>
+
+    <h2 class="seccion seccion-centrada">Reservar es sencillo</h2>
+
+    <div class="pasos-guia">
+        <div class="paso-guia">
+            <div class="paso-guia-numero">1</div>
+            <p class="paso-guia-titulo">Consulte las fechas</p>
+            <p class="paso-guia-texto">Indique su llegada, su salida y cuántos serán.</p>
+        </div>
+        <div class="paso-guia">
+            <div class="paso-guia-numero">2</div>
+            <p class="paso-guia-titulo">Elija su habitación</p>
+            <p class="paso-guia-texto">Vea solo las que están realmente libres esas noches.</p>
+        </div>
+        <div class="paso-guia">
+            <div class="paso-guia-numero">3</div>
+            <p class="paso-guia-titulo">Confirme al instante</p>
+            <p class="paso-guia-texto">Siga el estado de su reserva en tiempo real.</p>
+        </div>
+    </div>
+}
