@@ -1,0 +1,9 @@
+# Evita copiar al contenedor lo que no hace falta para compilar.
+# Es una de las buenas prácticas del punto 5.11 de la guía: no incluir
+# archivos innecesarios en la imagen.
+bin/
+obj/
+.vs/
+*.user
+Dockerfile
+.dockerignore
